@@ -1,5 +1,6 @@
 from fastapi import FastAPI , Depends , HTTPException
 from fastapi.testclient import TestClient
+from pydantic import BaseModel
 
 # for database connection
 from database import Base , engine , SessionLocal
@@ -59,3 +60,29 @@ async def delete_car(id : int , db : Session = Depends(get_db)):
     db.delete(car)
     db.commit()
     return {"result" : f"Car with id {id} deleted succesfully"}
+
+# for updating a car 
+class CarUpdate(BaseModel):
+    vehicle_type : str | None = None
+    plate : str | None = None
+    vehicle_name : str | None = None
+    vehicle_color : str | None = None 
+
+@app.put("/update/{id}")
+async def update_car(id : int , car_update : CarUpdate , db : Session = Depends(get_db)):
+    car = db.query(Car).filter(Car.vehicle_id == id).first()
+    if not car : 
+        raise HTTPException(status_code=404,detail="Car not found")
+    updated_data = car_update.dict(exclude_unset=True)
+    for key , value in updated_data.items():
+        setattr(car,key,value)
+    db.commit()
+    db.refresh(car)
+    result = {
+        "vehicle_id" : car.vehicle_id,
+        "vehicle-type" : car.vehicle_type,
+        "plate": car.plate,
+        "vehicle_name": car.vehicle_name,
+        "vehicle_color": car.vehicle_color,
+    }
+    return result
