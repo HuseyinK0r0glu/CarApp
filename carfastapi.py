@@ -1,4 +1,4 @@
-from fastapi import FastAPI , Depends
+from fastapi import FastAPI , Depends , HTTPException
 from fastapi.testclient import TestClient
 
 # for database connection
@@ -50,3 +50,12 @@ async def get_cars(db : Session = Depends(get_db)):
         }
         result.append(car_dict)
     return result
+
+@app.delete("/delete/{id}")
+async def delete_car(id : int , db : Session = Depends(get_db)):
+    car = db.query(Car).filter(Car.vehicle_id == id).first()
+    if not car : 
+        raise HTTPException(status_code=404,detail="Car not found")
+    db.delete(car)
+    db.commit()
+    return {"result" : f"Car with id {id} deleted succesfully"}
