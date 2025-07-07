@@ -36,9 +36,23 @@ async def create_car(car : dict , db : Session = Depends(get_db)):
         "vehicle_color": car["vehicle_color"],
     }
 
+@app.get("/car/{id}")
+async def get_car(id : int , db : Session = Depends(get_db)):
+    car = db.query(Car).filter(Car.vehicle_id == id).first()
+    if not car : 
+        raise HTTPException(status_code=404,detail="Car not found")
+    car_dict = {
+        "vehicle_id" : car.vehicle_id,
+        "vehicle-type" : car.vehicle_type,
+        "plate": car.plate,
+        "vehicle_name": car.vehicle_name,
+        "vehicle_color": car.vehicle_color,
+    }
+    return car_dict
+
 @app.get("/cars")
 async def get_cars(db : Session = Depends(get_db)):
-    cars =db.query(Car).all()
+    cars = db.query(Car).all()
     # to convert to JSON
     result = []
     for car in cars : 
