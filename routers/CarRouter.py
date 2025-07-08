@@ -1,15 +1,15 @@
-from fastapi import FastAPI , Depends , HTTPException
+from fastapi import APIRouter , Depends , HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
 # for database connection
 from database import Base , engine , SessionLocal
-from models import Car
+from models.CarModel import Car
 from sqlalchemy.orm import Session
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+router = APIRouter()
 
 def get_db():
     db = SessionLocal()
@@ -19,11 +19,11 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/")
+@router.get("/")
 async def firstApiCall():
     return {"message" : "Hello World"}
 
-@app.post("/createCar")
+@router.post("/createCar")
 async def create_car(car : dict , db : Session = Depends(get_db)):
     db_car = Car(**car)
     db.add(db_car)
@@ -36,7 +36,7 @@ async def create_car(car : dict , db : Session = Depends(get_db)):
         "vehicle_color": car["vehicle_color"],
     }
 
-@app.get("/car/{id}")
+@router.get("/car/{id}")
 async def get_car(id : int , db : Session = Depends(get_db)):
     car = db.query(Car).filter(Car.vehicle_id == id).first()
     if not car : 
@@ -50,7 +50,7 @@ async def get_car(id : int , db : Session = Depends(get_db)):
     }
     return car_dict
 
-@app.get("/cars")
+@router.get("/cars")
 async def get_cars(db : Session = Depends(get_db)):
     cars = db.query(Car).all()
     # to convert to JSON
@@ -66,7 +66,7 @@ async def get_cars(db : Session = Depends(get_db)):
         result.append(car_dict)
     return result
 
-@app.delete("/delete/{id}")
+@router.delete("/delete/{id}")
 async def delete_car(id : int , db : Session = Depends(get_db)):
     car = db.query(Car).filter(Car.vehicle_id == id).first()
     if not car : 
@@ -82,7 +82,7 @@ class CarUpdate(BaseModel):
     vehicle_name : str | None = None
     vehicle_color : str | None = None 
 
-@app.put("/update/{id}")
+@router.put("/update/{id}")
 async def update_car(id : int , car_update : CarUpdate , db : Session = Depends(get_db)):
     car = db.query(Car).filter(Car.vehicle_id == id).first()
     if not car : 
