@@ -63,14 +63,14 @@ async def get_cars(db : Session = Depends(get_db)):
         result.append(car_dict)
     return result
 
-@router.delete("/delete/{id}")
+@router.delete("/deleteCar/{id}")
 async def delete_car(id : int , db : Session = Depends(get_db)):
     car = deleteCar(id, db)
     if not car:
         raise HTTPException(status_code=404, detail="Car not found")
     return {"result": f"Car with id {id} deleted successfully"}
 
-@router.put("/update/{id}")
+@router.put("/updateCar/{id}")
 async def update_car(id: int, car_update: CarUpdate, db: Session = Depends(get_db)):
     car = updateCar(id, car_update, db)
     if not car:
