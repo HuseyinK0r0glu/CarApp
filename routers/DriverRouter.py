@@ -1,6 +1,7 @@
 from fastapi import APIRouter , Depends , HTTPException
 from fastapi.testclient import TestClient
 from database import get_db
+from typing import List
 
 # for database connection
 from database import Base , engine , SessionLocal
@@ -13,27 +14,14 @@ from schemas.DriverSchema import DriverCreate , DriverUpdate , DriverResponse
 # service
 from services.DriverService import getAllDrivers , createDriver , getDriver , deleteDriver , updateDriver
 
-# TODO : write a method for creating a JSON
-
 Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
-@router.get("/drivers")
+@router.get("/drivers" , response_model=List[DriverResponse])
 async def get_drivers(db : Session = Depends(get_db)):
     drivers = getAllDrivers(db)
-    # to convert to JSON
-    result = []
-    for driver in drivers : 
-        driver_dict = {
-            "driver_id" : driver.driver_id,
-            "driver_gender" : driver.driver_gender,
-            "driver_age": driver.driver_age,
-            "driver_name": driver.driver_name,
-            "drivers_cars_plate": driver.drivers_cars_plate,
-        }
-        result.append(driver_dict)
-    return result
+    return drivers
 
 @router.get("/driver/{id}")
 async def get_driver(id : int , db : Session = Depends(get_db)):
