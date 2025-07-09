@@ -1,7 +1,6 @@
-from sqlalchemy import Column , String , Integer 
+from sqlalchemy import Column , String , Integer , ForeignKey 
 from database import Base
-
-# TODO : one-to-one or one-to-many relationship could be added 
+from sqlalchemy.orm import relationship   
 
 class Driver(Base):
     __tablename__ = "drivers"
@@ -9,4 +8,6 @@ class Driver(Base):
     driver_gender = Column(String)
     driver_age = Column(String)
     driver_name = Column(String)
-    drivers_cars_plate = Column(String)
+
+    vehicle_id = Column(Integer,ForeignKey("cars.vehicle_id"))
+    vehicle = relationship("Car" , back_populates="drivers")

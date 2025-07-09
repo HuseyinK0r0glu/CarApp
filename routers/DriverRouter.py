@@ -28,12 +28,13 @@ async def get_driver(id : int , db : Session = Depends(get_db)):
     driver = getDriver(id,db)
     if not driver : 
         raise HTTPException(status_code=404,detail="Driver not found")
+
     driver_dict = {
         "driver_id" : driver.driver_id,
         "driver_gender" : driver.driver_gender,
         "driver_age": driver.driver_age,
         "driver_name": driver.driver_name,
-        "drivers_cars_plate": driver.drivers_cars_plate,
+        "vehicle": driver.vehicle
     }
     return driver_dict
 

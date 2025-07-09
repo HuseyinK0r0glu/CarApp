@@ -1,5 +1,6 @@
 from sqlalchemy import Column , String , Integer 
 from database import Base
+from sqlalchemy.orm import relationship
 
 class Car(Base):
     __tablename__ = "cars"
@@ -8,3 +9,6 @@ class Car(Base):
     plate = Column(String)
     vehicle_name = Column(String)
     vehicle_color = Column(String)
+
+    # One to many relationship
+    drivers = relationship("Driver",back_populates="vehicle")

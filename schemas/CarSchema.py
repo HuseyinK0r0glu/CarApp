@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from schemas.DriverSchema import DriverUpdate , DriverCreate
 
 # for updating a car 
 class CarUpdate(BaseModel):
@@ -13,3 +15,4 @@ class CarCreate(BaseModel):
     plate: str
     vehicle_name: str
     vehicle_color: str
+    drivers : List[DriverCreate] | None = None
