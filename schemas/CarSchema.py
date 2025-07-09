@@ -8,6 +8,7 @@ class CarUpdate(BaseModel):
     plate : str | None = None
     vehicle_name : str | None = None
     vehicle_color : str | None = None 
+    fuel_type : str | None = None
 
 # for creating a car
 class CarCreate(BaseModel):
@@ -16,3 +17,4 @@ class CarCreate(BaseModel):
     vehicle_name: str
     vehicle_color: str
     drivers : List[DriverCreate] | None = None
+    fuel_type : str | None = None

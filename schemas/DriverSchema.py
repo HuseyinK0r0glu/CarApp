@@ -18,6 +18,7 @@ class CarResponse(BaseModel):
     plate: str
     vehicle_name: str
     vehicle_color: str
+    fuel_type: str
 
     class Config:
         orm_mode = True

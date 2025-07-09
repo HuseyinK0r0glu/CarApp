@@ -1,5 +1,6 @@
-from sqlalchemy import Column , String , Integer 
+from sqlalchemy import Column , String , Integer , Enum
 from database import Base
+from enums.carEnums import FuelType
 from sqlalchemy.orm import relationship
 
 class Car(Base):
@@ -9,6 +10,7 @@ class Car(Base):
     plate = Column(String)
     vehicle_name = Column(String)
     vehicle_color = Column(String)
+    fuel_type = Column(Enum(FuelType) , nullable=True)
 
     # One to many relationship
     drivers = relationship("Driver",back_populates="vehicle")

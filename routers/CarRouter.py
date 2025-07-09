@@ -11,8 +11,6 @@ from schemas.CarSchema import CarUpdate , CarCreate
 # service
 from services.CarService import getAllCars , getCar , deleteCar , createCar , updateCar
 
-# Base.metadata.create_all(bind=engine)
-
 async def firstApiCall():
     return {"message" : "Hello World"}
 
@@ -42,6 +40,7 @@ async def get_car(id : int , db : Session = Depends(get_db)):
         "plate": car.plate,
         "vehicle_name": car.vehicle_name,
         "vehicle_color": car.vehicle_color,
+        "fuel_type": car.fuel_type,
         "drivers" : drivers
     }
     return car_dict
@@ -69,7 +68,8 @@ async def get_cars(db : Session = Depends(get_db)):
             "plate": car.plate,
             "vehicle_name": car.vehicle_name,
             "vehicle_color": car.vehicle_color,
-            "drivers" : drivers
+            "drivers" : drivers,
+            "fuel_type": car.fuel_type
         }
         result.append(car_dict)
     return result
@@ -102,5 +102,6 @@ async def update_car(id: int, car_update: CarUpdate, db: Session = Depends(get_d
         "plate": car.plate,
         "vehicle_name": car.vehicle_name,
         "vehicle_color": car.vehicle_color,
-        "drivers" : drivers
+        "drivers" : drivers,
+        "fuel_type": car.fuel_type
     }   
