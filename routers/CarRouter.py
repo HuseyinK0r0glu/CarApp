@@ -1,10 +1,8 @@
-from fastapi import APIRouter , Depends , HTTPException
-from fastapi.testclient import TestClient
-from database import get_db
+from fastapi import Depends , HTTPException
 
 # for database connection
-from database import Base , engine , SessionLocal
-from models.CarModel import Car
+from database import get_db
+from database import Base , engine
 from sqlalchemy.orm import Session
 
 # schemas (models) 
@@ -13,22 +11,15 @@ from schemas.CarSchema import CarUpdate , CarCreate
 # service
 from services.CarService import getAllCars , getCar , deleteCar , createCar , updateCar
 
-# TODO : write a method for creating a JSON
+# Base.metadata.create_all(bind=engine)
 
-Base.metadata.create_all(bind=engine)
-
-router = APIRouter()
-
-@router.get("/")
 async def firstApiCall():
     return {"message" : "Hello World"}
 
-@router.post("/createCar")
 async def create_car(car: CarCreate, db: Session = Depends(get_db)):
     db_car = createCar(car, db)
     return db_car
 
-@router.get("/car/{id}")
 async def get_car(id : int , db : Session = Depends(get_db)):
     car = getCar(id,db)
     if not car : 
@@ -55,7 +46,6 @@ async def get_car(id : int , db : Session = Depends(get_db)):
     }
     return car_dict
 
-@router.get("/cars")
 async def get_cars(db : Session = Depends(get_db)):
     cars = getAllCars(db)
     # to convert to JSON
@@ -84,7 +74,6 @@ async def get_cars(db : Session = Depends(get_db)):
         result.append(car_dict)
     return result
 
-@router.delete("/deleteCar/{id}")
 async def delete_car(id : int , db : Session = Depends(get_db)):
     car = deleteCar(id, db)
     if not car:
@@ -97,7 +86,6 @@ async def delete_car(id : int , db : Session = Depends(get_db)):
     db.commit() 
     return {"result": f"Car with id {id} deleted successfully"}
 
-@router.put("/updateCar/{id}")
 async def update_car(id: int, car_update: CarUpdate, db: Session = Depends(get_db)):
     car = updateCar(id, car_update, db)
     if not car:
@@ -106,7 +94,7 @@ async def update_car(id: int, car_update: CarUpdate, db: Session = Depends(get_d
     drivers = []
 
     for driver in car.drivers:
-        drivers.append(drivers)
+        drivers.append(driver)
 
     return {
         "vehicle_id": car.vehicle_id,
